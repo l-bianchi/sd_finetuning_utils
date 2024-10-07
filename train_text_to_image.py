@@ -294,6 +294,17 @@ def main():
         args.pretrained_model_name_or_path, subfolder="unet"
     )
 
+    # Carica safety checker e feature extractor
+    from diffusers import StableDiffusionSafetyChecker
+    from transformers import AutoFeatureExtractor
+
+    safety_checker = StableDiffusionSafetyChecker.from_pretrained(
+        args.pretrained_model_name_or_path, subfolder="safety_checker"
+    )
+    feature_extractor = AutoFeatureExtractor.from_pretrained(
+        args.pretrained_model_name_or_path, subfolder="feature_extractor"
+    )
+
     # Congela vae e text_encoder e imposta unet in modalità training
     vae.requires_grad_(False)
     text_encoder.requires_grad_(False)
@@ -450,6 +461,8 @@ def main():
                             tokenizer=tokenizer,
                             unet=accelerator.unwrap_model(unet),
                             scheduler=noise_scheduler,
+                            safety_checker=safety_checker,
+                            feature_extractor=feature_extractor,
                         )
                         pipeline.save_pretrained(args.output_dir)
                         unet.train()
@@ -469,6 +482,8 @@ def main():
             tokenizer=tokenizer,
             unet=accelerator.unwrap_model(unet),
             scheduler=noise_scheduler,
+            safety_checker=safety_checker,
+            feature_extractor=feature_extractor,
         )
         pipeline.save_pretrained(args.output_dir)
 
