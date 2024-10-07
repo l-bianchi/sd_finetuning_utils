@@ -254,6 +254,12 @@ def parse_args():
         required=False,
         help="Revision of pretrained model identifier from huggingface.co/models.",
     )
+    parser.add_argument(
+        "--variant",
+        type=str,
+        default=None,
+        help="Variant of the model files of the pretrained model identifier from huggingface.co/models, 'e.g.' fp16",
+    )
     args = parser.parse_args()
 
     # Gestione del local_rank per il training distribuito
