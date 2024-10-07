@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
+
 import argparse
 import logging
 import math
@@ -22,7 +23,6 @@ from accelerate.state import AcceleratorState
 from accelerate.utils import ProjectConfiguration, set_seed
 from datasets import load_dataset
 from packaging import version
-from torchvision import transforms
 from tqdm.auto import tqdm
 from transformers import CLIPTextModel, CLIPTokenizer
 
@@ -34,18 +34,12 @@ from diffusers import (
     UNet2DConditionModel,
 )
 from diffusers.optimization import get_scheduler
-from diffusers.training_utils import (
-    EMAModel,
-    compute_dream_and_update_latents,
-    compute_snr,
-)
 from diffusers.utils import (
     check_min_version,
     deprecate,
     is_wandb_available,
-    make_image_grid,
+    is_xformers_available,
 )
-from diffusers.utils.hub_utils import load_or_create_model_card, populate_model_card
 from diffusers.utils.import_utils import is_xformers_available
 from diffusers.utils.torch_utils import is_compiled_module
 
@@ -340,12 +334,20 @@ def main():
     else:
         raise ValueError("È necessario specificare --dataset_name o --train_data_dir.")
 
+    # Definisci la funzione di collate personalizzata
+    def collate_fn(examples):
+        pixel_values = torch.stack([example["pixel_values"] for example in examples])
+        pixel_values = pixel_values.to(memory_format=torch.contiguous_format).float()
+        input_ids = torch.stack([example["input_ids"] for example in examples])
+        return {"pixel_values": pixel_values, "input_ids": input_ids}
+
     # DataLoader
     train_dataloader = torch.utils.data.DataLoader(
         train_dataset,
         batch_size=args.train_batch_size,
         shuffle=True,
-        num_workers=4,
+        num_workers=2,  # Puoi regolare questo valore in base alle risorse disponibili
+        collate_fn=collate_fn,  # Aggiungi collate_fn qui
     )
 
     # Calcolo dei passi di training
