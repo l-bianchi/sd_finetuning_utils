@@ -469,7 +469,7 @@ def main():
     # Salva il modello finale
     if accelerator.is_main_process:
         unet.eval()
-        StableDiffusionPipeline.from_pretrained(
+        pipeline = StableDiffusionPipeline.from_pretrained(
             args.pretrained_model_name_or_path,
             vae=vae,
             text_encoder=text_encoder,
