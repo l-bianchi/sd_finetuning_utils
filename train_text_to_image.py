@@ -247,6 +247,13 @@ def parse_args():
         default=-1,
         help="Rango locale per il training distribuito.",
     )
+    parser.add_argument(
+        "--revision",
+        type=str,
+        default=None,
+        required=False,
+        help="Revision of pretrained model identifier from huggingface.co/models.",
+    )
     args = parser.parse_args()
 
     # Gestione del local_rank per il training distribuito
