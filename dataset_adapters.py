@@ -60,6 +60,7 @@ class HuggingFaceDatasetAdapter:
             examples["pixel_values"] = [transforms_list(image) for image in images]
             captions = []
             for caption in examples[caption_column]:
+                print(caption)
                 if isinstance(caption, str):
                     captions.append(caption)
                 elif isinstance(caption, (list, np.ndarray)):
