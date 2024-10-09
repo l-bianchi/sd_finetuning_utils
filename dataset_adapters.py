@@ -33,7 +33,7 @@ class HuggingFaceDatasetAdapter:
 
         # Determina le colonne di immagini e caption
         image_column = args.image_column if args.image_column else "image"
-        caption_column = args.caption_column if args.caption_column else "text"
+        caption_column = args.caption_column if args.caption_column else "index"
 
         # Preprocessing delle immagini e delle caption
         def preprocess(examples):
