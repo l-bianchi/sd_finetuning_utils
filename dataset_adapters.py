@@ -26,6 +26,7 @@ class HuggingFaceDatasetAdapter:
             dataset_name,
             cache_dir=args.cache_dir,
             use_auth_token=True if args.use_auth_token else None,
+            trust_remote_code=True,
         )
 
         column_names = dataset["train"].column_names
